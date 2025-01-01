@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { QueueModule } from './queue/queue.module';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
+import { User } from './auth/user.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -12,11 +14,16 @@ import { QueueModule } from './queue/queue.module';
       username: 'root',
       password: 'Kotresh893@',
       database: 'front_desk',
-      autoLoadEntities: true,
+      entities: [User],
       synchronize: true, // Use only in development
     }),
-    AuthModule,
-    QueueModule,
+    TypeOrmModule.forFeature([User]),
+    JwtModule.register({
+      secret: 'secretKey', // Replace with a secure key in production
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
+  providers: [AuthService],
+  controllers: [AuthController],
 })
 export class AppModule {}

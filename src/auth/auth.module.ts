@@ -1,20 +1,37 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { Controller, Post, Put, Delete, Get, Body, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { User } from './user.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-@Module({
-  imports: [
-    TypeOrmModule.forFeature([User]), // Import TypeORM repository for User entity
-    JwtModule.register({
-      secret: 'yourSecretKey', // Replace with a secure secret in production
-      signOptions: { expiresIn: '1h' }, // Token expiration time
-    }),
-  ],
-  providers: [AuthService],
-  controllers: [AuthController],
-  exports: [AuthService], // Export AuthService for use in other modules if needed
-})
-export class AuthModule {}
+@Controller('users')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  // Endpoint to create a new user
+  @Post()
+  async createUser(
+    @Body() body: { username: string; password: string; role: string },
+  ) {
+    return this.authService.createUser(body.username, body.password, body.role);
+  }
+
+  // Endpoint to update an existing user
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() body: Partial<{ username: string; password: string; role: string }>,
+  ) {
+    return this.authService.updateUser(id, body);
+  }
+
+  // Endpoint to delete a user
+  @Delete(':id')
+  async deleteUser(@Param('id') id: number) {
+    await this.authService.deleteUser(id);
+    return { message: 'User deleted successfully' };
+  }
+
+  // Endpoint to get all users
+  @Get()
+  async getAllUsers() {
+    return this.authService.getAllUsers();
+  }
+}
