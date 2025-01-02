@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
-import { User } from './auth/user.entity';
+import { DoctorService } from './doctor/doctor.service';
+import { DoctorController } from './doctor/doctor.controller';
+import { Doctor } from './doctor/doctor.entity';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -14,16 +14,16 @@ import { JwtModule } from '@nestjs/jwt';
       username: 'root',
       password: 'Kotresh893@',
       database: 'front_desk',
-      entities: [User],
+      entities: [Doctor],
       synchronize: true, // Use only in development
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Doctor]),
     JwtModule.register({
       secret: 'secretKey', // Replace with a secure key in production
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService],
-  controllers: [AuthController],
+  providers: [DoctorService],
+  controllers: [DoctorController],
 })
 export class AppModule {}
