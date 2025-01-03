@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Delete, Get, Body, Param } from '@nestjs/common';
+import { Controller, Post, Put, Delete, Get, Body, Param, Query } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 
 @Controller('doctors')
@@ -8,9 +8,26 @@ export class DoctorController {
   // Endpoint to add a new doctor
   @Post()
   async addDoctor(
-    @Body() body: { name: string; course: string; specialization: string; ratings: number; description: string },
+    @Body()
+    body: {
+      name: string;
+      course: string;
+      specialization: string;
+      ratings: number;
+      description: string;
+      location: string;
+      availability: 'free' | 'busy' | 'offduty'; // Restrict to allowed values
+    },
   ) {
-    return this.doctorService.addDoctor(body.name, body.course, body.specialization, body.ratings, body.description);
+    return this.doctorService.addDoctor(
+      body.name,
+      body.course,
+      body.specialization,
+      body.ratings,
+      body.description,
+      body.location,
+      body.availability,
+    );
   }
 
   // Endpoint to update an existing doctor
@@ -24,10 +41,13 @@ export class DoctorController {
       specialization: string;
       ratings: number;
       description: string;
+      location: string;
+      availability: 'free' | 'busy' | 'offduty';
     }>,
   ) {
     return this.doctorService.updateDoctor(id, body);
   }
+
 
   // Endpoint to delete a doctor
   @Delete(':id')
@@ -40,5 +60,13 @@ export class DoctorController {
   @Get()
   async getAllDoctors() {
     return this.doctorService.getAllDoctors();
+  }
+
+  // Endpoint to get doctors by availability
+  @Get('availability')
+  async getDoctorsByAvailability(
+    @Query('status') status: 'free' | 'busy' | 'offduty', // Restrict to allowed values
+  ) {
+    return this.doctorService.getDoctorsByAvailability(status);
   }
 }

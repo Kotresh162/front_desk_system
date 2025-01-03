@@ -19,4 +19,14 @@ export class Doctor {
 
   @Column({ type: 'text' })
   description: string;
+
+  @Column()
+  location: string; // New column for location
+
+  @Column({
+    type: 'enum',
+    enum: ['free', 'busy', 'offduty'], // Define allowed values
+    default: 'free', // Default value
+  })
+  availability: 'free' | 'busy' | 'offduty'; // TypeScript enum-like typing
 }
